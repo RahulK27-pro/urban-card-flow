@@ -1,13 +1,39 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState } from 'react';
+import { AuthProvider, useAuth } from '@/contexts/AuthContext';
+import { LandingPage } from '@/components/LandingPage';
+import { PassengerLogin } from '@/components/PassengerLogin';
+import { PassengerDashboard } from '@/components/PassengerDashboard';
+import { AdminLogin } from '@/components/AdminLogin';
+import { AdminDashboard } from '@/components/AdminDashboard';
+
+const AppContent = () => {
+  const { passenger, admin } = useAuth();
+  const [selectedPortal, setSelectedPortal] = useState<'landing' | 'passenger' | 'admin'>('landing');
+
+  if (passenger) {
+    return <PassengerDashboard />;
+  }
+
+  if (admin) {
+    return <AdminDashboard />;
+  }
+
+  if (selectedPortal === 'landing') {
+    return <LandingPage onSelectPortal={setSelectedPortal} />;
+  }
+
+  if (selectedPortal === 'passenger') {
+    return <PassengerLogin />;
+  }
+
+  return <AdminLogin />;
+};
 
 const Index = () => {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
-    </div>
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 };
 
