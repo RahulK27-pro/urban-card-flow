@@ -32,7 +32,7 @@ export const PassengerDashboard = () => {
             <Button 
               variant="outline" 
               onClick={logout}
-              className="border-white/20 text-white hover:bg-white/10"
+              className="border-white/20 text-white bg-white/5"
             >
               <LogOut className="w-4 h-4 mr-2" />
               Logout
