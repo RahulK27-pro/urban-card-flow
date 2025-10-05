@@ -1,14 +1,15 @@
 import { useState } from 'react';
-import { Shield, Users, MapPin, DollarSign, CreditCard, LogOut, BarChart3 } from 'lucide-react';
+import { Shield, Users, MapPin, DollarSign, CreditCard, LogOut, BarChart3, Wallet } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { PassengerManagement } from './admin/PassengerManagement';
 import { StationManagement } from './admin/StationManagement';
 import { FareRuleManagement } from './admin/FareRuleManagement';
 import { CardTypeManagement } from './admin/CardTypeManagement';
+import { CardManagement } from './admin/CardManagement';
 import { Analytics } from './admin/Analytics';
 
-type AdminView = 'analytics' | 'passengers' | 'stations' | 'fares' | 'cardtypes';
+type AdminView = 'analytics' | 'passengers' | 'cards' | 'stations' | 'fares' | 'cardtypes';
 
 export const AdminDashboard = () => {
   const { logout } = useAuth();
@@ -17,6 +18,7 @@ export const AdminDashboard = () => {
   const menuItems = [
     { id: 'analytics' as AdminView, label: 'Analytics', icon: BarChart3 },
     { id: 'passengers' as AdminView, label: 'Passengers', icon: Users },
+    { id: 'cards' as AdminView, label: 'Cards', icon: Wallet },
     { id: 'stations' as AdminView, label: 'Stations', icon: MapPin },
     { id: 'fares' as AdminView, label: 'Fare Rules', icon: DollarSign },
     { id: 'cardtypes' as AdminView, label: 'Card Types', icon: CreditCard },
@@ -73,6 +75,7 @@ export const AdminDashboard = () => {
         <div className="p-8">
           {activeView === 'analytics' && <Analytics />}
           {activeView === 'passengers' && <PassengerManagement />}
+          {activeView === 'cards' && <CardManagement />}
           {activeView === 'stations' && <StationManagement />}
           {activeView === 'fares' && <FareRuleManagement />}
           {activeView === 'cardtypes' && <CardTypeManagement />}
