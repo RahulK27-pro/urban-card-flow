@@ -7,13 +7,13 @@ interface TripHistoryProps {
 }
 
 export const TripHistory = ({ cardNumber }: TripHistoryProps) => {
-  // Mock data - replace with API call
+  // Mock data - replace with API call to /api/cards/{cardId}/trips
   const trips = [
-    { id: 1, from: 'Central Station', to: 'North Terminal', date: '2024-01-15', time: '08:30', fare: 2.50 },
-    { id: 2, from: 'North Terminal', to: 'East Plaza', date: '2024-01-15', time: '17:45', fare: 1.80 },
-    { id: 3, from: 'East Plaza', to: 'Central Station', date: '2024-01-14', time: '09:15', fare: 2.50 },
-    { id: 4, from: 'Central Station', to: 'West Park', date: '2024-01-14', time: '18:00', fare: 3.20 },
-    { id: 5, from: 'West Park', to: 'South Bay', date: '2024-01-13', time: '10:30', fare: 2.90 },
+    { tripId: 1, cardId: cardNumber, entryTime: '2024-01-15 08:30', exitTime: '2024-01-15 09:15', entryStation: 'Central Station', exitStation: 'North Terminal', fareAmount: 2.50 },
+    { tripId: 2, cardId: cardNumber, entryTime: '2024-01-15 17:45', exitTime: '2024-01-15 18:20', entryStation: 'North Terminal', exitStation: 'East Plaza', fareAmount: 1.80 },
+    { tripId: 3, cardId: cardNumber, entryTime: '2024-01-14 09:15', exitTime: '2024-01-14 10:00', entryStation: 'East Plaza', exitStation: 'Central Station', fareAmount: 2.50 },
+    { tripId: 4, cardId: cardNumber, entryTime: '2024-01-14 18:00', exitTime: '2024-01-14 18:45', entryStation: 'Central Station', exitStation: 'West Park', fareAmount: 3.20 },
+    { tripId: 5, cardId: cardNumber, entryTime: '2024-01-13 10:30', exitTime: '2024-01-13 11:15', entryStation: 'West Park', exitStation: 'South Bay', fareAmount: 2.90 },
   ];
 
   return (
@@ -29,27 +29,29 @@ export const TripHistory = ({ cardNumber }: TripHistoryProps) => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Date</TableHead>
-                <TableHead>Time</TableHead>
-                <TableHead>From</TableHead>
-                <TableHead>To</TableHead>
+                <TableHead>Trip ID</TableHead>
+                <TableHead>Entry Time</TableHead>
+                <TableHead>Entry Station</TableHead>
+                <TableHead>Exit Station</TableHead>
+                <TableHead>Exit Time</TableHead>
                 <TableHead className="text-right">Fare</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {trips.map((trip) => (
-                <TableRow key={trip.id}>
+                <TableRow key={trip.tripId}>
+                  <TableCell className="font-mono text-muted-foreground">#{trip.tripId}</TableCell>
                   <TableCell>
                     <div className="flex items-center">
                       <Calendar className="w-4 h-4 mr-2 text-muted-foreground" />
-                      {trip.date}
+                      {trip.entryTime}
                     </div>
                   </TableCell>
-                  <TableCell>{trip.time}</TableCell>
-                  <TableCell className="font-medium">{trip.from}</TableCell>
-                  <TableCell className="font-medium">{trip.to}</TableCell>
+                  <TableCell className="font-medium">{trip.entryStation}</TableCell>
+                  <TableCell className="font-medium">{trip.exitStation}</TableCell>
+                  <TableCell>{trip.exitTime}</TableCell>
                   <TableCell className="text-right font-semibold text-accent">
-                    ${trip.fare.toFixed(2)}
+                    ${trip.fareAmount.toFixed(2)}
                   </TableCell>
                 </TableRow>
               ))}
