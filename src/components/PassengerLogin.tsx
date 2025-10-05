@@ -17,30 +17,21 @@ export const PassengerLogin = () => {
     setLoading(true);
 
     try {
-      // Mock API call - replace with actual API endpoint
-      // const response = await fetch(`http://localhost:5000/api/passenger/login`, {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ cardNumber }),
-      // });
+      const response = await fetch(`http://localhost:5000/api/passenger/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cardNumber }),
+      });
       
-      // Mock data for demonstration
-      const mockData = {
-        PassengerID: 1,
-        FirstName: 'John',
-        LastName: 'Doe',
-        Email: 'john.doe@example.com',
-        PhoneNumber: '+1234567890',
-        CardNumber: cardNumber,
-        Balance: 50.00,
-        CardType: 'Adult',
-        Status: 'Active'
-      };
-
-      loginPassenger(mockData);
+      if (!response.ok) {
+        throw new Error('Invalid card number');
+      }
+      
+      const passengerData = await response.json();
+      loginPassenger(passengerData);
       toast({
         title: 'Login Successful',
-        description: `Welcome back, ${mockData.FirstName}!`,
+        description: `Welcome back, ${passengerData.FirstName}!`,
       });
     } catch (error) {
       toast({

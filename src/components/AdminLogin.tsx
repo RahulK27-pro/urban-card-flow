@@ -17,16 +17,24 @@ export const AdminLogin = () => {
     setLoading(true);
 
     try {
-      // Mock authentication - use admin/admin123
-      if (credentials.username === 'admin' && credentials.password === 'admin123') {
-        loginAdmin(credentials.username);
-        toast({
-          title: 'Login Successful',
-          description: 'Welcome to the admin dashboard!',
-        });
-      } else {
+      const response = await fetch(`http://localhost:5000/api/admin/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username: credentials.username,
+          password: credentials.password
+        }),
+      });
+
+      if (!response.ok) {
         throw new Error('Invalid credentials');
       }
+
+      loginAdmin(credentials.username);
+      toast({
+        title: 'Login Successful',
+        description: 'Welcome to the admin dashboard!',
+      });
     } catch (error) {
       toast({
         title: 'Login Failed',
@@ -77,7 +85,7 @@ export const AdminLogin = () => {
               <ArrowRight className="ml-2 w-4 h-4" />
             </Button>
             <p className="text-xs text-center text-muted-foreground">
-              Demo credentials: admin / admin123
+              Demo credentials: admin / admin
             </p>
           </form>
         </CardContent>

@@ -1,13 +1,67 @@
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Users, DollarSign, TrendingUp, CreditCard } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line } from 'recharts';
 
+interface KPIMetrics {
+  totalPassengers: number;
+  totalBalance: number;
+  totalTrips: number;
+  totalRevenue: number;
+}
+
 export const Analytics = () => {
-  const kpis = [
-    { label: 'Total Passengers', value: '1,234', icon: Users, color: 'text-accent' },
-    { label: 'Active Cards', value: '987', icon: CreditCard, color: 'text-success' },
-    { label: 'Monthly Revenue', value: '$12,450', icon: DollarSign, color: 'text-accent' },
-    { label: 'Daily Trips', value: '456', icon: TrendingUp, color: 'text-success' },
+  const [kpis, setKpis] = useState<KPIMetrics>({
+    totalPassengers: 0,
+    totalBalance: 0,
+    totalTrips: 0,
+    totalRevenue: 0
+  });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchAnalytics = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/analytics/kpis');
+        if (response.ok) {
+          const data = await response.json();
+          setKpis(data);
+        }
+      } catch (error) {
+        console.error('Error fetching analytics:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAnalytics();
+  }, []);
+
+  const kpiItems = [
+    {
+      label: 'Total Passengers',
+      value: loading ? '...' : kpis.totalPassengers.toLocaleString(),
+      icon: Users,
+      color: 'text-accent'
+    },
+    {
+      label: 'Active Cards',
+      value: loading ? '...' : Math.floor(kpis.totalBalance / 100).toLocaleString(),
+      icon: CreditCard,
+      color: 'text-success'
+    },
+    {
+      label: 'Monthly Revenue',
+      value: loading ? '...' : `$${kpis.totalRevenue.toLocaleString()}`,
+      icon: DollarSign,
+      color: 'text-accent'
+    },
+    {
+      label: 'Daily Trips',
+      value: loading ? '...' : Math.floor(kpis.totalTrips / 30).toLocaleString(),
+      icon: TrendingUp,
+      color: 'text-success'
+    },
   ];
 
   const tripsPerStation = [
@@ -37,7 +91,7 @@ export const Analytics = () => {
 
       {/* KPIs */}
       <div className="grid md:grid-cols-4 gap-6">
-        {kpis.map((kpi) => {
+        {kpiItems.map((kpi) => {
           const Icon = kpi.icon;
           return (
             <Card key={kpi.label} className="shadow-card">

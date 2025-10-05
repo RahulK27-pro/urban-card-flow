@@ -1,19 +1,65 @@
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { ArrowUpCircle, Calendar } from 'lucide-react';
+
+interface Transaction {
+  TransactionID: number;
+  TransactionType: string;
+  Amount: number;
+  TransactionDate: string;
+}
 
 interface TransactionHistoryProps {
   cardNumber: string;
 }
 
 export const TransactionHistory = ({ cardNumber }: TransactionHistoryProps) => {
-  // Mock data - replace with API call
-  const transactions = [
-    { id: 1, date: '2024-01-15', time: '07:00', amount: 20.00, type: 'Top-up', method: 'Credit Card' },
-    { id: 2, date: '2024-01-10', time: '12:30', amount: 50.00, type: 'Top-up', method: 'Debit Card' },
-    { id: 3, date: '2024-01-05', time: '09:15', amount: 30.00, type: 'Top-up', method: 'Credit Card' },
-    { id: 4, date: '2023-12-28', time: '16:45', amount: 25.00, type: 'Top-up', method: 'Cash' },
-  ];
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      try {
+        // First get the card ID using the card number
+        const cardsResponse = await fetch(`http://localhost:5000/api/cards`);
+        if (!cardsResponse.ok) throw new Error('Failed to fetch cards');
+        const cards = await cardsResponse.json();
+        const card = cards.find((c: any) => c.CardNumber === cardNumber);
+
+        if (card) {
+          // Fetch transactions for this card
+          const transactionsResponse = await fetch(`http://localhost:5000/api/cards/${card.CardID}/transactions`);
+          if (transactionsResponse.ok) {
+            const transactionsData = await transactionsResponse.json();
+            setTransactions(transactionsData);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching transactions:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTransactions();
+  }, [cardNumber]);
+
+  if (loading) {
+    return (
+      <Card className="shadow-card">
+        <CardHeader>
+          <CardTitle className="flex items-center">
+            <ArrowUpCircle className="w-5 h-5 mr-2 text-success" />
+            Transaction History
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p>Loading transactions...</p>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="shadow-card">
@@ -36,26 +82,32 @@ export const TransactionHistory = ({ cardNumber }: TransactionHistoryProps) => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {transactions.map((transaction) => (
-                <TableRow key={transaction.id}>
-                  <TableCell>
-                    <div className="flex items-center">
-                      <Calendar className="w-4 h-4 mr-2 text-muted-foreground" />
-                      {transaction.date}
-                    </div>
-                  </TableCell>
-                  <TableCell>{transaction.time}</TableCell>
-                  <TableCell>
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-success/10 text-success">
-                      {transaction.type}
-                    </span>
-                  </TableCell>
-                  <TableCell>{transaction.method}</TableCell>
-                  <TableCell className="text-right font-semibold text-success">
-                    +${transaction.amount.toFixed(2)}
-                  </TableCell>
-                </TableRow>
-              ))}
+              {transactions.map((transaction) => {
+                const date = new Date(transaction.TransactionDate);
+                const dateStr = date.toISOString().split('T')[0];
+                const timeStr = date.toTimeString().slice(0, 5);
+
+                return (
+                  <TableRow key={transaction.TransactionID}>
+                    <TableCell>
+                      <div className="flex items-center">
+                        <Calendar className="w-4 h-4 mr-2 text-muted-foreground" />
+                        {dateStr}
+                      </div>
+                    </TableCell>
+                    <TableCell>{timeStr}</TableCell>
+                    <TableCell>
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-success/10 text-success">
+                        {transaction.TransactionType}
+                      </span>
+                    </TableCell>
+                    <TableCell>Credit Card</TableCell>
+                    <TableCell className="text-right font-semibold text-success">
+                      +${transaction.Amount.toFixed(2)}
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
         </div>

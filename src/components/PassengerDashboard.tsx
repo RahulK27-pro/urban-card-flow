@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { CreditCard, ArrowUpCircle, History, User, LogOut, Wallet } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -8,11 +8,61 @@ import { ProfileModal } from './ProfileModal';
 import { TripHistory } from './TripHistory';
 import { TransactionHistory } from './TransactionHistory';
 
+interface TripStats {
+  totalTrips: number;
+  totalSpent: number;
+  avgTripCost: number;
+}
+
 export const PassengerDashboard = () => {
   const { passenger, logout } = useAuth();
   const [showRecharge, setShowRecharge] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const [activeTab, setActiveTab] = useState<'overview' | 'trips' | 'transactions'>('overview');
+  const [tripStats, setTripStats] = useState<TripStats>({ totalTrips: 0, totalSpent: 0, avgTripCost: 0 });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchTripStats = async () => {
+      if (!passenger) return;
+
+      try {
+        // Get card ID from passenger data
+        const cardResponse = await fetch(`http://localhost:5000/api/cards?passengerId=${passenger.PassengerID}`);
+        if (!cardResponse.ok) throw new Error('Failed to fetch card');
+        const cards = await cardResponse.json();
+        const card = cards.find((c: any) => c.CardNumber === passenger.CardNumber);
+
+        if (card) {
+          // Fetch trips for this card
+          const tripsResponse = await fetch(`http://localhost:5000/api/cards/${card.CardID}/trips`);
+          if (tripsResponse.ok) {
+            const trips = await tripsResponse.json();
+            const currentMonthTrips = trips.filter((trip: any) => {
+              const tripDate = new Date(trip.EntryTime);
+              const now = new Date();
+              return tripDate.getMonth() === now.getMonth() && tripDate.getFullYear() === now.getFullYear();
+            });
+
+            const totalSpent = currentMonthTrips.reduce((sum: number, trip: any) => sum + (trip.FareAmount || 0), 0);
+            const avgTripCost = currentMonthTrips.length > 0 ? totalSpent / currentMonthTrips.length : 0;
+
+            setTripStats({
+              totalTrips: currentMonthTrips.length,
+              totalSpent: totalSpent,
+              avgTripCost: avgTripCost
+            });
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching trip stats:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTripStats();
+  }, [passenger]);
 
   if (!passenger) return null;
 
@@ -145,7 +195,7 @@ export const PassengerDashboard = () => {
                   <CardTitle className="text-lg">Total Trips</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-3xl font-bold text-accent">24</p>
+                  <p className="text-3xl font-bold text-accent">{loading ? '...' : tripStats.totalTrips}</p>
                   <p className="text-sm text-muted-foreground">This month</p>
                 </CardContent>
               </Card>
@@ -154,7 +204,7 @@ export const PassengerDashboard = () => {
                   <CardTitle className="text-lg">Total Spent</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-3xl font-bold text-accent">$45.60</p>
+                  <p className="text-3xl font-bold text-accent">${loading ? '...' : tripStats.totalSpent.toFixed(2)}</p>
                   <p className="text-sm text-muted-foreground">This month</p>
                 </CardContent>
               </Card>
@@ -163,7 +213,7 @@ export const PassengerDashboard = () => {
                   <CardTitle className="text-lg">Avg Trip Cost</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-3xl font-bold text-accent">$1.90</p>
+                  <p className="text-3xl font-bold text-accent">${loading ? '...' : tripStats.avgTripCost.toFixed(2)}</p>
                   <p className="text-sm text-muted-foreground">Per journey</p>
                 </CardContent>
               </Card>

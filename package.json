@@ -1,15 +1,30 @@
 {
-  "name": "vite_react_shadcn_ts",
+  "name": "urban-transit-card-system",
+  "description": "A comprehensive full-stack application for managing urban transit cards, passengers, stations, and fare systems",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "api": "python app.py",
+    "db:check": "python -c \"import sqlite3; conn = sqlite3.connect('project.db'); cursor = conn.cursor(); cursor.execute('SELECT name FROM sqlite_master WHERE type=\\'table\\''); tables = cursor.fetchall(); print('Database tables:', [t[0] for t in tables]); conn.close()\"",
+    "setup": "npm install && echo '✅ Frontend dependencies installed'"
   },
+  "keywords": [
+    "transit",
+    "urban-planning",
+    "card-management",
+    "react",
+    "flask",
+    "sqlite",
+    "full-stack"
+  ],
+  "author": "DBMS Case Study Team",
+  "license": "MIT",
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
     "@radix-ui/react-accordion": "^1.2.11",

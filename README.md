@@ -1,73 +1,201 @@
-# Welcome to your Lovable project
+# Urban Transit Card Management System
 
-## Project info
+A comprehensive full-stack application for managing urban transit cards, passengers, stations, and fare systems with real-time analytics and seamless database integration.
 
-**URL**: https://lovable.dev/projects/12899a61-4438-42fc-a240-d88bfe43bf07
+## 🌟 Features
 
-## How can I edit this code?
+### For Passengers
+- **Card Management**: View card balance, transaction history, and trip records
+- **Real-time Analytics**: Monthly trip statistics and spending insights
+- **Profile Management**: Update personal information and preferences
+- **Secure Login**: Card-based authentication system
 
-There are several ways of editing your application.
+### For Administrators
+- **Comprehensive Dashboard**: Real-time analytics and KPI monitoring
+- **User Management**: Manage passengers, cards, and card types
+- **Station Management**: Configure transit stations and fare rules
+- **System Analytics**: Revenue tracking, trip analysis, and usage patterns
 
-**Use Lovable**
+## 🛠️ Technology Stack
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/12899a61-4438-42fc-a240-d88bfe43bf07) and start prompting.
+### Frontend
+- **React 18** with TypeScript for type safety
+- **Vite** for fast development and building
+- **Tailwind CSS** for responsive styling
+- **shadcn/ui** for consistent UI components
+- **React Query** for efficient data fetching and caching
+- **React Router** for navigation
 
-Changes made via Lovable will be committed automatically to this repo.
+### Backend
+- **Python Flask** for RESTful API
+- **SQLite** for relational database management
+- **SQLAlchemy-style** queries for data operations
 
-**Use your preferred IDE**
+### Database Schema
+- **Passengers**: Personal information and registration details
+- **Cards**: Card numbers, balances, status, and associations
+- **Stations**: Transit stations with line information
+- **Card Types**: Different card categories (Adult, Student, Senior)
+- **Transactions**: Top-up and payment history
+- **Trips**: Journey records with entry/exit data
+- **Fare Rules**: Station-to-station pricing configurations
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## 🚀 Quick Start
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### Prerequisites
+- **Node.js** (v16 or higher)
+- **Python** (v3.8 or higher)
+- **SQLite** (usually included with Python)
 
-Follow these steps:
+### Installation & Setup
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
+1. **Clone the repository**
+```bash
 git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+cd urban-card-flow
 ```
 
-**Edit a file directly in GitHub**
+2. **Install frontend dependencies**
+```bash
+npm install
+```
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+3. **Start the backend API**
+```bash
+python app.py
+```
+The API will run on `http://localhost:5000`
 
-**Use GitHub Codespaces**
+4. **Start the frontend development server**
+```bash
+npm run dev
+```
+The application will be available at `http://localhost:5173`
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## 🔑 Default Credentials
 
-## What technologies are used for this project?
+### Passenger Login
+Use any of the sample card numbers:
+- `SNJ1001` (Sanjay Kumar - Adult Card)
+- `PRI2002` (Priya Sharma - Student Card)
+- `ARU3003` (Arun Verma - Adult Card)
+- `MEE4004` (Meera Nair - Senior Card)
+- `ROH5005` (Rohan Singh - Student Card)
 
-This project is built with:
+### Admin Login
+- **Username**: `admin`
+- **Password**: `admin`
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## 📊 Database Information
 
-## How can I deploy this project?
+The SQLite database (`project.db`) comes pre-populated with:
+- **5 Sample Passengers** with different card types
+- **5 Transit Stations** across different lines
+- **3 Card Types** (Adult, Student, Senior) with fare multipliers
+- **Sample Cards** with balances and transaction history
+- **Fare Rules** for station-to-station pricing
+- **Trip Records** for testing and demonstration
 
-Simply open [Lovable](https://lovable.dev/projects/12899a61-4438-42fc-a240-d88bfe43bf07) and click on Share -> Publish.
+## 🏗️ Project Structure
 
-## Can I connect a custom domain to my Lovable project?
+```
+urban-card-flow/
+├── app.py                 # Flask API server
+├── project.db            # SQLite database
+├── src/
+│   ├── components/       # React components
+│   │   ├── admin/       # Admin management components
+│   │   ├── PassengerLogin.tsx
+│   │   ├── PassengerDashboard.tsx
+│   │   ├── TripHistory.tsx
+│   │   └── TransactionHistory.tsx
+│   ├── contexts/        # React contexts
+│   ├── hooks/          # Custom React hooks
+│   └── pages/          # Page components
+├── public/             # Static assets
+└── package.json       # Node.js dependencies
+```
 
-Yes, you can!
+## 🔌 API Endpoints
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+### Authentication
+- `POST /api/passenger/login` - Passenger authentication
+- `POST /api/admin/login` - Admin authentication
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+### Passengers
+- `GET /api/passengers` - List all passengers
+- `POST /api/passengers` - Create new passenger
+- `GET /api/passengers/{id}` - Get passenger details
+- `PUT /api/passengers/{id}` - Update passenger
+- `DELETE /api/passengers/{id}` - Delete passenger
+
+### Cards
+- `GET /api/cards` - List all cards
+- `POST /api/cards` - Create new card
+- `GET /api/cards/{id}` - Get card details
+- `PUT /api/cards/{id}` - Update card
+- `DELETE /api/cards/{id}` - Delete card
+- `POST /api/cards/{id}/recharge` - Recharge card balance
+
+### Stations
+- `GET /api/stations` - List all stations
+- `POST /api/stations` - Create new station
+- `GET /api/stations/{id}` - Get station details
+- `PUT /api/stations/{id}` - Update station
+- `DELETE /api/stations/{id}` - Delete station
+
+### Analytics
+- `GET /api/analytics/kpis` - Key performance indicators
+
+### Trip & Transaction History
+- `GET /api/cards/{id}/trips` - Get trip history for a card
+- `GET /api/cards/{id}/transactions` - Get transaction history for a card
+
+## 🎯 Key Features Implemented
+
+✅ **Real Database Integration** - All data stored in SQLite database
+✅ **RESTful API** - Complete backend API with Flask
+✅ **Real-time Updates** - Live balance and transaction updates
+✅ **Responsive Design** - Works on desktop and mobile devices
+✅ **Type Safety** - Full TypeScript implementation
+✅ **Modern UI** - Beautiful interface with Tailwind CSS
+✅ **Error Handling** - Proper error states and user feedback
+✅ **Loading States** - Smooth loading animations
+✅ **Data Validation** - Input validation and sanitization
+
+## 🔒 Security Features
+
+- Card-based authentication for passengers
+- Admin role-based access control
+- Input validation and sanitization
+- SQL injection prevention through parameterized queries
+
+## 📈 Future Enhancements
+
+- Real-time trip tracking with GPS integration
+- Mobile app development (React Native)
+- Advanced analytics with charts and graphs
+- Multi-language support
+- Push notifications for low balance alerts
+- Integration with payment gateways
+- Fare calculation engine improvements
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🆘 Support
+
+For support, email support@urbantransit.com or create an issue in the repository.
+
+---
+
+**Built with ❤️ for efficient urban transit management**
